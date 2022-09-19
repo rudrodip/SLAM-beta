@@ -25,26 +25,20 @@ void setup() {
 
 void loop(){
   Dabble.processInput();
-  Serial.print("KeyPressed: ");
-  if (GamePad.isUpPressed())
-  {
-    Serial.print("Up");
-    forward(motor1, motor2, 255);
-  } else if (GamePad.isDownPressed())
-  {
-    Serial.print("Down");
-    back(motor1, motor2, 255);
-  } else if (GamePad.isLeftPressed())
-  {
-    Serial.print("Left");
-    left(motor1, motor2, 255);
-  } else if (GamePad.isRightPressed())
-  {
-    Serial.print("Right");
-    right(motor1, motor2, 255);
-  } else
-  {
-    brake(motor1, motor2);
-  }
-  Serial.print('\t');
+  float x_axis = GamePad.getXaxisData();
+  int radius = GamePad.getRadius();
+  
+  int pwm1 = 0;
+  int pwm2 = 0;
+  int mapped_x = x_axis * 55 / 7; // decreasing factor 55
+  int mapped_radius = radius * 255 / 7;
+
+  pwm1 += (mapped_radius + mapped_x);
+  pwm2 += (mapped_radius - mapped_x);
+
+  if (pwm1 > 255) pwm1 = 255;
+  if (pwm2 > 255) pwm2 = 255;
+
+  motor1.drive(pwm1);
+  motor2.drive(pwm2);
 }
